@@ -1,5 +1,5 @@
 from database_handler.mongodb import get_womens_clothing_data
-from shopify import upload_data_to_shopify
+from shopify_uploader import upload_data_to_shopify
 from analysis import analyze_shopify_results
 
 def main():

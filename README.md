@@ -1,70 +1,47 @@
-# Shopify MongoDB Clothes
+# shopify-mongodb-clothes-sync
 
-## Overview
+A script that reads women's clothing records from MongoDB and creates matching products in a Shopify store.
 
-This project integrates Shopify with MongoDB to manage and analyze women's clothing data. It scrapes product data from Shopify, stores it in MongoDB, and provides analytical insights.
+## Features
 
-## Complexities
+- Reads documents with `category: "Women's Clothing"` from a MongoDB collection (`title`, `description`, `price`, `size`).
+- Creates one Shopify product per record, with one variant carrying size and price.
+- Prints the total number of products in the shop afterwards.
 
-### Shopify API Integration
-- **Challenge:** Seamless communication with Shopify's API.
-- **Solution:** Utilized the `shopify` Python package to manage sessions and handle API requests effectively.
+## Tech stack
 
-### Data Management
-- **Challenge:** Efficiently storing and retrieving large datasets.
-- **Solution:** Leveraged MongoDB for its scalability and ease of use with the `pymongo` library.
+Python 3.8+, pymongo, ShopifyAPI.
 
-## Challenges and Solutions
+## Project structure
 
-### Challenge 1: API Rate Limits
-- **Problem:** Handling Shopify API rate limits.
-- **Solution:** Implemented session management to handle retries and respect rate limits.
+```
+main.py                     read, upload, count
+shopify_uploader.py         Shopify session and product creation
+analysis.py                 product count
+database_handler/mongodb.py MongoDB query
+```
 
-### Challenge 2: Dynamic Data Handling
-- **Problem:** Parsing and analyzing dynamically changing data.
-- **Solution:** Used MongoDB's flexible schema design to accommodate varying data structures.
+## Setup and run
 
-## Getting Started
+Requires a running MongoDB with a `clothes-data` collection and a Shopify Admin API access token.
 
-### Prerequisites
-- Python 3.8+
-- MongoDB
-- Shopify Admin API Key
+| Variable | Purpose |
+| --- | --- |
+| `SHOPIFY_URL` | Shop domain, for example `your-shop.myshopify.com` |
+| `ADMIN_API_KEY` | Shopify Admin API access token |
+| `API_VERSION` | Shopify API version, for example `2024-01` |
+| `SHOPIFY_VENDOR` | Optional vendor name for created products |
+| `MONGODB_URI` | Optional, default `mongodb://localhost:27017` |
+| `MONGODB_DB` | Optional, default `tenet-clothes-data` |
 
-### Installation
+```bash
+pip install -r requirements.txt
+export SHOPIFY_URL=... ADMIN_API_KEY=... API_VERSION=...
+python main.py
+```
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/faisal-fida/shopify-mongodb-clothes.git
-   cd shopify-mongodb-clothes
-   ```
+## Limitations
 
-2. Install the required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Set up your environment variables:
-   ```plaintext
-   SHOPIFY_URL=your_shopify_url
-   ADMIN_API_KEY=your_admin_api_key
-   API_VERSION=your_api_version
-   ```
-
-4. Run the application:
-   ```bash
-   python main.py
-   ```
-
-## Usage
-
-- The script fetches women's clothing data from MongoDB and uploads it to Shopify.
-- It also provides a function to analyze the products uploaded to Shopify.
-
-## Contributing
-
-We welcome contributions. Please open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+- Not tested against a live shop. Running it creates real products and has no duplicate check.
+- No pagination in the product count, so it reports at most one page of results.
+- Collection and field names are fixed to the original dataset.
